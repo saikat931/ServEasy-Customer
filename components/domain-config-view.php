@@ -25,7 +25,10 @@ if (!$is_super) {
     exit();
 }
 
-require_once __DIR__ . '/../../../backend/app/services/DomainConfigService.php';
+$svcPath = file_exists(__DIR__ . '/../services/DomainConfigService.php')
+    ? __DIR__ . '/../services/DomainConfigService.php'
+    : (file_exists(__DIR__ . '/../../../backend/app/services/DomainConfigService.php') ? __DIR__ . '/../../../backend/app/services/DomainConfigService.php' : null);
+if ($svcPath) require_once $svcPath;
 use App\Services\DomainConfigService;
 
 // Handle AJAX actions if called directly

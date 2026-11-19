@@ -388,15 +388,24 @@ try {
             exit();
         }
         if ($type === 'blogs') {
-            include __DIR__ . '/../frontend-admin/components/blog-management-view.php';
+            $viewPath = file_exists(__DIR__ . '/components/blog-management-view.php')
+                ? __DIR__ . '/components/blog-management-view.php'
+                : __DIR__ . '/../frontend-admin/components/blog-management-view.php';
+            include $viewPath;
             exit();
         }
         if ($type === 'categories') {
-            include __DIR__ . '/../frontend-admin/components/category-management-view.php';
+            $viewPath = file_exists(__DIR__ . '/components/category-management-view.php')
+                ? __DIR__ . '/components/category-management-view.php'
+                : __DIR__ . '/../frontend-admin/components/category-management-view.php';
+            include $viewPath;
             exit();
         }
         if ($type === 'convenience_fee') {
-            include __DIR__ . '/../frontend-admin/components/convenience-fee-view.php';
+            $viewPath = file_exists(__DIR__ . '/components/convenience-fee-view.php')
+                ? __DIR__ . '/components/convenience-fee-view.php'
+                : __DIR__ . '/../frontend-admin/components/convenience-fee-view.php';
+            include $viewPath;
             exit();
         }
         if ($type === 'logo' && !$is_super_admin) {

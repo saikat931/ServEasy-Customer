@@ -110,6 +110,7 @@ class ApiBridge {
 
         // 1. Try local PHP class if backend is on local filesystem
         $possiblePaths = [
+            __DIR__ . '/../services/OtpConfigService.php',
             __DIR__ . '/../../backend/app/services/OtpConfigService.php',
             __DIR__ . '/../../../backend/app/services/OtpConfigService.php',
             __DIR__ . '/../backend/app/services/OtpConfigService.php',

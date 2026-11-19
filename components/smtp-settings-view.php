@@ -42,7 +42,10 @@ if (!$is_super) {
     exit();
 }
 
-require_once __DIR__ . '/../../../backend/app/Services/OtpConfigService.php';
+$svcPath = file_exists(__DIR__ . '/../services/OtpConfigService.php')
+    ? __DIR__ . '/../services/OtpConfigService.php'
+    : (file_exists(__DIR__ . '/../../../backend/app/Services/OtpConfigService.php') ? __DIR__ . '/../../../backend/app/Services/OtpConfigService.php' : null);
+if ($svcPath) require_once $svcPath;
 use App\Services\OtpConfigService;
 
 // ── Handle AJAX actions for SMTP Setup ─────────────────────────────
@@ -100,7 +103,10 @@ if (isset($_POST['smtp_action'])) {
             exit();
         }
 
-        require_once __DIR__ . '/../../../backend/app/helpers/MailHelper.php';
+        $mailHelperPath = file_exists(__DIR__ . '/../services/MailHelper.php')
+            ? __DIR__ . '/../services/MailHelper.php'
+            : (file_exists(__DIR__ . '/../../../backend/app/helpers/MailHelper.php') ? __DIR__ . '/../../../backend/app/helpers/MailHelper.php' : null);
+        if ($mailHelperPath) require_once $mailHelperPath;
         $testOtp = (string)rand(100000, 999999);
         $res = \App\Helpers\MailHelper::sendOtp($testEmail, $testOtp, 'Super Admin Tester', 'test');
 

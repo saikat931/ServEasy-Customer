@@ -1,6 +1,7 @@
 <?php
-$config = require __DIR__ . '/../../backend/config/app.php';
-$finalTitle = $title ?? $config['admin_default_title'];
+$appConfigPath = file_exists(__DIR__ . '/../../backend/config/app.php') ? __DIR__ . '/../../backend/config/app.php' : null;
+$config = $appConfigPath ? require $appConfigPath : [];
+$finalTitle = $title ?? ($config['admin_default_title'] ?? 'ServEasy Super Admin');
 ?>
 
 <!DOCTYPE html>

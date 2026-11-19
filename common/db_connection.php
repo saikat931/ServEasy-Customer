@@ -102,5 +102,22 @@ if (!class_exists('Database')) {
 
             return self::$pdo;
         }
+
+        public static function getConnection(?string $dbName = null): PDO
+        {
+            return self::connect();
+        }
+    }
+}
+
+namespace App\Helpers {
+    if (!class_exists('App\Helpers\DB')) {
+        class DB
+        {
+            public static function getConnection(?string $dbName = null): \PDO
+            {
+                return \Database::connect();
+            }
+        }
     }
 }

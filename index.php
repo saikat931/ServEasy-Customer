@@ -233,7 +233,9 @@ $is_admin = isset($_SESSION['standard_admin']);
                     <?php elseif ($is_admin): ?>
                         <li class="nav-item"><a class="btn btn-emerald ml-3" href="../frontend-admin/admin-dashboard.php">Admin Dashboard</a></li>
                     <?php else: ?>
-                        <li class="nav-item"><a class="nav-link" href="../frontend-admin/admin-login.php">Admin Login</a></li>
+                        <?php if (file_exists(__DIR__ . '/../frontend-admin/admin-login.php')): ?>
+                            <li class="nav-item"><a class="nav-link" href="../frontend-admin/admin-login.php">Admin Login</a></li>
+                        <?php endif; ?>
                         <li class="nav-item"><a class="btn btn-emerald ml-3" href="superadmin-login.php">Super Admin Login</a></li>
                     <?php endif; ?>
                 </ul>
@@ -249,7 +251,7 @@ $is_admin = isset($_SESSION['standard_admin']);
             <p class="hero-desc">Experience the future of organizational management with our unified dashboard system. Secure, scalable, and designed for high-performance teams.</p>
             <div class="d-flex justify-content-center" style="gap: 15px;">
                 <a href="#about" class="btn btn-emerald">Learn More</a>
-                <a href="../frontend-admin/admin-login.php" class="btn btn-outline-emerald">Get Started</a>
+                <a href="<?= file_exists(__DIR__ . '/../frontend-admin/admin-login.php') ? '../frontend-admin/admin-login.php' : 'superadmin-login.php' ?>" class="btn btn-outline-emerald">Get Started</a>
             </div>
         </div>
     </header>
