@@ -6,8 +6,13 @@
  */
 
 if (!isset($pdo)) {
-    require_once __DIR__ . '/../../../backend/config/db_connection.php';
-    $pdo = Database::connect();
+    $dbConfigPath = file_exists(__DIR__ . '/../common/db_connection.php')
+        ? __DIR__ . '/../common/db_connection.php'
+        : (file_exists(__DIR__ . '/../../../backend/config/db_connection.php') ? __DIR__ . '/../../../backend/config/db_connection.php' : null);
+    if ($dbConfigPath) {
+        require_once $dbConfigPath;
+        $pdo = Database::connect();
+    }
 }
 
 $is_super = false;

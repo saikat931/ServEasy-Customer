@@ -5,17 +5,21 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Database Connection
-$dbConfigPath = file_exists(__DIR__ . '/../backend/config/db_connection.php')
-    ? __DIR__ . '/../backend/config/db_connection.php'
-    : (file_exists(__DIR__ . '/../../backend/config/db_connection.php') ? __DIR__ . '/../../backend/config/db_connection.php' : null);
+$dbConfigPath = file_exists(__DIR__ . '/common/db_connection.php')
+    ? __DIR__ . '/common/db_connection.php'
+    : (file_exists(__DIR__ . '/../backend/config/db_connection.php')
+        ? __DIR__ . '/../backend/config/db_connection.php'
+        : (file_exists(__DIR__ . '/../../backend/config/db_connection.php') ? __DIR__ . '/../../backend/config/db_connection.php' : null));
 if ($dbConfigPath) {
     require_once $dbConfigPath;
     $pdo = Database::connect();
 } else {
-    $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
-    $dbname = $_ENV['DB_DATABASE'] ?? 'serveasy_v2';
-    $username = $_ENV['DB_USERNAME'] ?? 'root';
-    $password = $_ENV['DB_PASSWORD'] ?? '';
+    $httpHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || str_starts_with($httpHost, 'localhost:');
+    $host = $_ENV['DB_HOST'] ?? ($isLocal ? '127.0.0.1' : 'localhost');
+    $dbname = $_ENV['DB_DATABASE'] ?? ($isLocal ? 'serveasy_v2' : 'u923365340_serveasy');
+    $username = $_ENV['DB_USERNAME'] ?? ($isLocal ? 'root' : 'u923365340_serveasy');
+    $password = $_ENV['DB_PASSWORD'] ?? ($isLocal ? '' : 'Serveasy@931');
     try {
         $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

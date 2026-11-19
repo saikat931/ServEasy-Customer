@@ -2,7 +2,12 @@
 session_start();
 
 // Database Connection
-require_once __DIR__ . '/../backend/config/db_connection.php';
+$dbConfigPath = file_exists(__DIR__ . '/common/db_connection.php')
+    ? __DIR__ . '/common/db_connection.php'
+    : (file_exists(__DIR__ . '/../backend/config/db_connection.php') ? __DIR__ . '/../backend/config/db_connection.php' : null);
+if ($dbConfigPath) {
+    require_once $dbConfigPath;
+}
 
 // Check if user is legally here (has setup session)
 if (!isset($_SESSION['setup_admin_id'])) {
