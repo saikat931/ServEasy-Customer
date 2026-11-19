@@ -70,18 +70,6 @@ if (!class_exists('Database')) {
                 return self::$pdo;
             }
 
-            // Check if central backend config exists (Local environment)
-            $backendDbPath = dirname(__DIR__, 2) . '/backend/config/db_connection.php';
-            if (@file_exists($backendDbPath)) {
-                try {
-                    require_once $backendDbPath;
-                    if (class_exists('Database') && method_exists('Database', 'connect')) {
-                        self::$pdo = \Database::connect();
-                        return self::$pdo;
-                    }
-                } catch (\Throwable $t) {}
-            }
-
             $vars = self::loadEnvFiles();
 
             $httpHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
