@@ -1,0 +1,104 @@
+CREATE TABLE admin_users (
+
+    admin_id INT AUTO_INCREMENT PRIMARY KEY,
+
+    -- Basic Info
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+
+    -- Authentication
+    password_hash VARCHAR(255) NOT NULL,
+    otp VARCHAR(6) DEFAULT NULL,
+    otp_created_at DATETIME DEFAULT NULL,
+
+    -- Role System
+    role ENUM(
+        'super_admin',
+        'admin',
+        'subscriber'
+    ) DEFAULT 'subscriber',
+
+    -- Requested Role (Admin request system)
+    requested_role ENUM(
+        'admin',
+        'subscriber'
+    ) DEFAULT NULL,
+
+    -- Approval System
+    status ENUM(
+        'pending',
+        'approved',
+        'rejected'
+    ) DEFAULT 'pending',
+
+    approved_by INT NULL,
+    approved_at DATETIME NULL,
+
+    -- Security Questions (10)
+    question_1 VARCHAR(255),
+    answer_1 VARCHAR(255),
+
+    question_2 VARCHAR(255),
+    answer_2 VARCHAR(255),
+
+    question_3 VARCHAR(255),
+    answer_3 VARCHAR(255),
+
+    question_4 VARCHAR(255),
+    answer_4 VARCHAR(255),
+
+    question_5 VARCHAR(255),
+    answer_5 VARCHAR(255),
+
+    question_6 VARCHAR(255),
+    answer_6 VARCHAR(255),
+
+    question_7 VARCHAR(255),
+    answer_7 VARCHAR(255),
+
+    question_8 VARCHAR(255),
+    answer_8 VARCHAR(255),
+
+    question_9 VARCHAR(255),
+    answer_9 VARCHAR(255),
+
+    question_10 VARCHAR(255),
+    answer_10 VARCHAR(255),
+
+    -- Login Tracking
+    last_login_time DATETIME,
+    last_login_ip VARCHAR(45),
+
+    login_status ENUM(
+        'SUCCESS',
+        'FAILED'
+    ),
+
+    -- Device Tracking
+    device_name VARCHAR(100),
+    device_type VARCHAR(50),
+    browser VARCHAR(100),
+    operating_system VARCHAR(100),
+    user_agent TEXT,
+
+    -- Account Controls
+    is_verified BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE,
+
+    -- Security Controls
+    failed_login_attempts INT DEFAULT 0,
+    account_locked_until DATETIME NULL,
+
+    -- Timestamps
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP 
+        DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    -- Self-reference (who approved)
+    FOREIGN KEY (approved_by)
+        REFERENCES admin_users(admin_id)
+
+);
