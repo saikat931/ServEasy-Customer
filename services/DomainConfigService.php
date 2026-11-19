@@ -82,6 +82,213 @@ class DomainConfigService {
     }
 
     /**
+     * Get the complete live ecosystem directory
+     */
+    public static function getEcosystemDirectory(): array {
+        $httpHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $isLocal = in_array($httpHost, ['localhost', '127.0.0.1', '::1']) || str_starts_with($httpHost, 'localhost:');
+
+        if ($isLocal) {
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+            $localRoot = $protocol . $httpHost . '/ServEasy-v2';
+            return [
+                'is_local' => true,
+                'environment' => 'development',
+                'portals' => [
+                    'customer' => [
+                        'id' => 'customer',
+                        'name' => 'Customer Web Portal',
+                        'tag' => 'Customer App',
+                        'icon' => 'fa-shopping-bag',
+                        'badge_color' => '#38bdf8',
+                        'domain' => $localRoot . '/frontend-web',
+                        'role' => 'Public Customer Marketplace, Browse Services & Bookings',
+                        'repo' => 'https://github.com/saikat931/ServEasy.git',
+                        'repo_name' => 'saikat931/ServEasy',
+                        'urls' => [
+                            ['label' => 'Home Page', 'url' => $localRoot . '/frontend-web/index.php', 'desc' => 'Customer storefront'],
+                            ['label' => 'Browse Services', 'url' => $localRoot . '/frontend-web/pages/services/index.php', 'desc' => 'Service catalog listings'],
+                            ['label' => 'Customer Login', 'url' => $localRoot . '/frontend-web/login.php', 'desc' => 'Customer sign in'],
+                            ['label' => 'Track Booking', 'url' => $localRoot . '/frontend-web/track-booking.php', 'desc' => 'Order status tracking'],
+                        ]
+                    ],
+                    'provider' => [
+                        'id' => 'provider',
+                        'name' => 'Service Provider Portal',
+                        'tag' => 'Partner App',
+                        'icon' => 'fa-handshake',
+                        'badge_color' => '#10b981',
+                        'domain' => $localRoot . '/frontend-provider',
+                        'role' => 'Dealer & Partner Order Management, Fulfillment & Earnings',
+                        'repo' => 'https://github.com/saikat931/ServEasy-Provider.git',
+                        'repo_name' => 'saikat931/ServEasy-Provider',
+                        'urls' => [
+                            ['label' => 'Provider Dashboard', 'url' => $localRoot . '/frontend-provider/index.php?tab=dashboard', 'desc' => 'Order overview & metrics'],
+                            ['label' => 'My Services', 'url' => $localRoot . '/frontend-provider/index.php?tab=services', 'desc' => 'Service list & pricing'],
+                            ['label' => 'My Bookings', 'url' => $localRoot . '/frontend-provider/index.php?tab=bookings', 'desc' => 'Live booking management'],
+                            ['label' => 'Wallet & Payouts', 'url' => $localRoot . '/frontend-provider/index.php?tab=wallet', 'desc' => 'Earnings & withdrawal requests'],
+                            ['label' => 'Provider Login', 'url' => $localRoot . '/frontend-provider/login.php', 'desc' => 'Partner authentication'],
+                        ]
+                    ],
+                    'superadmin' => [
+                        'id' => 'superadmin',
+                        'name' => 'Super Admin Portal',
+                        'tag' => 'Governance',
+                        'icon' => 'fa-user-shield',
+                        'badge_color' => '#8b5cf6',
+                        'domain' => $localRoot . '/frontend-superadmin',
+                        'role' => 'Master Platform Governance, Convenience Fees, Categories & Settings',
+                        'repo' => 'https://github.com/saikat931/ServEasy-Superadmin.git',
+                        'repo_name' => 'saikat931/ServEasy-Superadmin',
+                        'urls' => [
+                            ['label' => 'Superadmin Dashboard', 'url' => $localRoot . '/frontend-superadmin/superadmin-dashboard.php', 'desc' => 'Executive control center'],
+                            ['label' => 'Superadmin Login', 'url' => $localRoot . '/frontend-superadmin/superadmin-login.php', 'desc' => 'Admin credential verification'],
+                            ['label' => 'Category Management', 'url' => $localRoot . '/frontend-superadmin/superadmin-dashboard.php?tab=categories', 'desc' => 'Manage categories & subcategories'],
+                            ['label' => 'Convenience Fee Settings', 'url' => $localRoot . '/frontend-superadmin/superadmin-dashboard.php?tab=convenience_fee', 'desc' => 'Platform charges & commissions'],
+                            ['label' => 'OTP Login Settings', 'url' => $localRoot . '/frontend-superadmin/superadmin-dashboard.php?tab=otp_config', 'desc' => 'Global OTP delivery configuration'],
+                            ['label' => 'SMTP Email Settings', 'url' => $localRoot . '/frontend-superadmin/superadmin-dashboard.php?tab=smtp_settings', 'desc' => 'Gmail SMTP credentials'],
+                            ['label' => 'Payment Gateway Keys', 'url' => $localRoot . '/frontend-superadmin/superadmin-dashboard.php?tab=payment_gateway', 'desc' => 'Razorpay API credentials'],
+                            ['label' => 'Admin Security Setup', 'url' => $localRoot . '/frontend-superadmin/admin-setup.php', 'desc' => 'Security recovery setup'],
+                        ]
+                    ],
+                    'backend' => [
+                        'id' => 'backend',
+                        'name' => 'Central Backend & REST APIs',
+                        'tag' => 'Central API Hub',
+                        'icon' => 'fa-server',
+                        'badge_color' => '#f59e0b',
+                        'domain' => $localRoot . '/backend',
+                        'role' => 'Central REST API Hub, Business Logic, Database Layer & Webhook Listeners',
+                        'repo' => 'https://github.com/saikat931/ServEasy-Backend.git',
+                        'repo_name' => 'saikat931/ServEasy-Backend',
+                        'api_base' => $localRoot . '/backend/api',
+                        'urls' => [
+                            ['label' => 'API Root Base', 'url' => $localRoot . '/backend/api/', 'desc' => 'REST API base path'],
+                            ['label' => 'Categories API', 'url' => $localRoot . '/backend/api/categories.php', 'desc' => 'Categories & service catalog'],
+                            ['label' => 'Bookings API', 'url' => $localRoot . '/backend/api/bookings.php', 'desc' => 'Order placement & status updates'],
+                            ['label' => 'Services API', 'url' => $localRoot . '/backend/api/services.php', 'desc' => 'Provider offerings & rates'],
+                            ['label' => 'Customer Auth API', 'url' => $localRoot . '/backend/api/auth-api.php', 'desc' => 'Customer authentication'],
+                            ['label' => 'Provider Auth API', 'url' => $localRoot . '/backend/api/dealer-auth-api.php', 'desc' => 'Partner authentication'],
+                            ['label' => 'Wallet & Payouts API', 'url' => $localRoot . '/backend/api/wallet.php', 'desc' => 'Partner balance ledger'],
+                            ['label' => 'Platform Settings API', 'url' => $localRoot . '/backend/api/platform-settings.php', 'desc' => 'Fee & site metadata'],
+                            ['label' => 'Razorpay Order Creator', 'url' => $localRoot . '/backend/api/create-payment-order.php', 'desc' => 'Razorpay order generation'],
+                            ['label' => 'Razorpay Webhook', 'url' => $localRoot . '/backend/api/payment-webhook.php', 'desc' => 'Instant payment capture listener'],
+                            ['label' => 'OTP Dispatch Service', 'url' => $localRoot . '/backend/api/otp-request.php', 'desc' => '6-digit OTP engine'],
+                            ['label' => 'SSE Real-time Events', 'url' => $localRoot . '/backend/api/sse-events.php', 'desc' => 'Server-sent live order stream'],
+                        ]
+                    ]
+                ],
+                'database' => [
+                    'host' => '127.0.0.1:3306',
+                    'name' => 'serveasy_v2',
+                    'user' => 'root',
+                    'charset' => 'utf8mb4_unicode_ci',
+                    'engine' => 'InnoDB (Local MySQL)'
+                ]
+            ];
+        }
+
+        // Live Production Hostinger Multi-Domain Architecture
+        return [
+            'is_local' => false,
+            'environment' => 'production',
+            'portals' => [
+                'customer' => [
+                    'id' => 'customer',
+                    'name' => 'Customer Web Portal',
+                    'tag' => 'Customer App',
+                    'icon' => 'fa-shopping-bag',
+                    'badge_color' => '#38bdf8',
+                    'domain' => 'https://silver-penguin-156353.hostingersite.com',
+                    'role' => 'Public Customer Marketplace, Browse Services & Instant Bookings',
+                    'repo' => 'https://github.com/saikat931/ServEasy-Customer.git',
+                    'repo_name' => 'saikat931/ServEasy-Customer',
+                    'urls' => [
+                        ['label' => 'Home Page', 'url' => 'https://silver-penguin-156353.hostingersite.com/', 'desc' => 'Customer storefront'],
+                        ['label' => 'Browse Services', 'url' => 'https://silver-penguin-156353.hostingersite.com/pages/services/', 'desc' => 'Service catalog listings'],
+                        ['label' => 'Customer Login', 'url' => 'https://silver-penguin-156353.hostingersite.com/login.php', 'desc' => 'Customer sign in'],
+                        ['label' => 'Track Booking', 'url' => 'https://silver-penguin-156353.hostingersite.com/track-booking.php', 'desc' => 'Order status tracking'],
+                        ['label' => 'Customer Profile', 'url' => 'https://silver-penguin-156353.hostingersite.com/profile.php', 'desc' => 'Account settings & history'],
+                    ]
+                ],
+                'provider' => [
+                    'id' => 'provider',
+                    'name' => 'Service Provider Portal',
+                    'tag' => 'Partner App',
+                    'icon' => 'fa-handshake',
+                    'badge_color' => '#10b981',
+                    'domain' => 'https://darkcyan-cassowary-121832.hostingersite.com',
+                    'role' => 'Partner & Provider Operations, Order Fulfillment, Earnings & ID Verification',
+                    'repo' => 'https://github.com/saikat931/ServEasy-Provider.git',
+                    'repo_name' => 'saikat931/ServEasy-Provider',
+                    'urls' => [
+                        ['label' => 'Provider Dashboard', 'url' => 'https://darkcyan-cassowary-121832.hostingersite.com/index.php?tab=dashboard', 'desc' => 'Order overview & metrics'],
+                        ['label' => 'My Services', 'url' => 'https://darkcyan-cassowary-121832.hostingersite.com/index.php?tab=services', 'desc' => 'Service catalog & pricing'],
+                        ['label' => 'My Bookings', 'url' => 'https://darkcyan-cassowary-121832.hostingersite.com/index.php?tab=bookings', 'desc' => 'Live booking management'],
+                        ['label' => 'Wallet & Payouts', 'url' => 'https://darkcyan-cassowary-121832.hostingersite.com/index.php?tab=wallet', 'desc' => 'Earnings & withdrawal requests'],
+                        ['label' => 'ID Verification', 'url' => 'https://darkcyan-cassowary-121832.hostingersite.com/index.php?tab=verification', 'desc' => 'Aadhaar / ID proof upload'],
+                        ['label' => 'Provider Login', 'url' => 'https://darkcyan-cassowary-121832.hostingersite.com/login.php', 'desc' => 'Partner authentication'],
+                    ]
+                ],
+                'superadmin' => [
+                    'id' => 'superadmin',
+                    'name' => 'Super Admin Portal',
+                    'tag' => 'Governance',
+                    'icon' => 'fa-user-shield',
+                    'badge_color' => '#8b5cf6',
+                    'domain' => 'https://inviting-royalblue-gerbil-79.hostingersite.com',
+                    'role' => 'Master Platform Governance, Convenience Fees, Categories, Admins & Global Configurations',
+                    'repo' => 'https://github.com/saikat931/ServEasy-Superadmin.git',
+                    'repo_name' => 'saikat931/ServEasy-Superadmin',
+                    'urls' => [
+                        ['label' => 'Superadmin Dashboard', 'url' => 'https://inviting-royalblue-gerbil-79.hostingersite.com/superadmin-dashboard.php', 'desc' => 'Executive control center'],
+                        ['label' => 'Superadmin Login', 'url' => 'https://inviting-royalblue-gerbil-79.hostingersite.com/superadmin-login.php', 'desc' => 'Admin credential verification'],
+                        ['label' => 'Category Management', 'url' => 'https://inviting-royalblue-gerbil-79.hostingersite.com/superadmin-dashboard.php?tab=categories', 'desc' => 'Manage categories & subcategories'],
+                        ['label' => 'Convenience Fee Settings', 'url' => 'https://inviting-royalblue-gerbil-79.hostingersite.com/superadmin-dashboard.php?tab=convenience_fee', 'desc' => 'Platform charges & commissions'],
+                        ['label' => 'OTP Login Settings', 'url' => 'https://inviting-royalblue-gerbil-79.hostingersite.com/superadmin-dashboard.php?tab=otp_config', 'desc' => 'Global OTP delivery configuration'],
+                        ['label' => 'SMTP Email Settings', 'url' => 'https://inviting-royalblue-gerbil-79.hostingersite.com/superadmin-dashboard.php?tab=smtp_settings', 'desc' => 'Gmail SMTP credentials'],
+                        ['label' => 'Payment Gateway Keys', 'url' => 'https://inviting-royalblue-gerbil-79.hostingersite.com/superadmin-dashboard.php?tab=payment_gateway', 'desc' => 'Razorpay API credentials'],
+                        ['label' => 'Admin Security Setup', 'url' => 'https://inviting-royalblue-gerbil-79.hostingersite.com/admin-setup.php', 'desc' => 'Security recovery setup'],
+                    ]
+                ],
+                'backend' => [
+                    'id' => 'backend',
+                    'name' => 'Central Backend & REST APIs',
+                    'tag' => 'Central API Hub',
+                    'icon' => 'fa-server',
+                    'badge_color' => '#f59e0b',
+                    'domain' => 'https://beige-curlew-610555.hostingersite.com',
+                    'role' => 'Central High-Throughput REST API Hub, Order Engine, Push Notifications & Webhook Listeners',
+                    'repo' => 'https://github.com/saikat931/ServEasy-Backend.git',
+                    'repo_name' => 'saikat931/ServEasy-Backend',
+                    'api_base' => 'https://beige-curlew-610555.hostingersite.com/api',
+                    'urls' => [
+                        ['label' => 'API Root Base', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/', 'desc' => 'REST API base path'],
+                        ['label' => 'Categories API', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/categories.php', 'desc' => 'Categories & service catalog'],
+                        ['label' => 'Bookings API', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/bookings.php', 'desc' => 'Order placement & status updates'],
+                        ['label' => 'Services API', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/services.php', 'desc' => 'Provider offerings & rates'],
+                        ['label' => 'Customer Auth API', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/auth-api.php', 'desc' => 'Customer authentication'],
+                        ['label' => 'Provider Auth API', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/dealer-auth-api.php', 'desc' => 'Partner authentication'],
+                        ['label' => 'Wallet & Payouts API', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/wallet.php', 'desc' => 'Partner balance ledger'],
+                        ['label' => 'Platform Settings API', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/platform-settings.php', 'desc' => 'Fee & site metadata'],
+                        ['label' => 'Razorpay Order Creator', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/create-payment-order.php', 'desc' => 'Razorpay order generation'],
+                        ['label' => 'Razorpay Webhook', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/payment-webhook.php', 'desc' => 'Instant payment capture listener'],
+                        ['label' => 'OTP Dispatch Service', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/otp-request.php', 'desc' => '6-digit OTP engine'],
+                        ['label' => 'SSE Real-time Events', 'url' => 'https://beige-curlew-610555.hostingersite.com/api/sse-events.php', 'desc' => 'Server-sent live order stream'],
+                    ]
+                ]
+            ],
+            'database' => [
+                'host' => 'localhost:3306 (Internal Hostinger Cloud)',
+                'name' => 'u923365340_serveasy',
+                'user' => 'u923365340_serveasy',
+                'charset' => 'utf8mb4_unicode_ci',
+                'engine' => 'InnoDB (MySQL on Hostinger)'
+            ]
+        ];
+    }
+
+    /**
      * Generate complete directory of all calculated endpoints
      */
     public static function getAllEndpoints(): array {
