@@ -353,8 +353,20 @@ try {
     // ── AJAX HANDLER FOR LISTS (GET & POST) ─────────────────────────
     if (isset($_REQUEST['ajax_action']) && $_REQUEST['ajax_action'] === 'fetch_list') {
         $type = $_REQUEST['type'] ?? 'admin';
-        if (!in_array($type, ['admin', 'dealer', 'user', 'verification', 'logo', 'service', 'blogs', 'categories', 'dealer_services', 'convenience_fee', 'payment_gateway', 'otp_config', 'smtp_settings', 'domain_config']))
+        if (!in_array($type, ['admin', 'dealer', 'user', 'verification', 'logo', 'service', 'blogs', 'categories', 'dealer_services', 'convenience_fee', 'payment_gateway', 'otp_config', 'smtp_settings', 'domain_config', 'profile', 'settings']))
             $type = 'admin';
+        if ($type === 'profile') {
+            include __DIR__ . '/components/profile-view.php';
+            exit();
+        }
+        if ($type === 'settings') {
+            if (!$is_super_admin) {
+                echo '<div class="alert alert-danger font-weight-bold"><i class="fas fa-lock mr-2"></i>Access denied: System Settings are strictly restricted to Super Administrators.</div>';
+                exit();
+            }
+            include __DIR__ . '/components/settings-view.php';
+            exit();
+        }
         if ($type === 'domain_config') {
             if (!$is_super_admin) {
                 echo '<div class="alert alert-danger font-weight-bold"><i class="fas fa-lock mr-2"></i>Access denied: Live Domain Configuration is strictly restricted to Super Administrators.</div>';
@@ -2219,6 +2231,31 @@ if (!in_array($open_tab, $valid_tabs)) {
                         <span class="badge badge-primary font-weight-bold" style="font-size: 0.65rem; padding: 0.25em 0.6em;">LIVE</span>
                     </a>
                 </li>
+
+                <hr class="sidebar-divider my-2">
+                <div class="sidebar-heading">Account & System</div>
+
+                <!-- Profile -->
+                <li class="nav-item" id="nav-profile">
+                    <a class="nav-link d-flex align-items-center justify-content-between" href="#" onclick="loadSection('profile');return false;">
+                        <div>
+                            <i class="fas fa-fw fa-user-circle text-info"></i>
+                            <span>Profile</span>
+                        </div>
+                        <span class="badge badge-info font-weight-bold" style="font-size: 0.65rem; padding: 0.25em 0.6em;">ME</span>
+                    </a>
+                </li>
+
+                <!-- Settings -->
+                <li class="nav-item" id="nav-settings">
+                    <a class="nav-link d-flex align-items-center justify-content-between" href="#" onclick="loadSection('settings');return false;">
+                        <div>
+                            <i class="fas fa-fw fa-cogs text-warning"></i>
+                            <span>Settings</span>
+                        </div>
+                        <span class="badge badge-warning font-weight-bold" style="font-size: 0.65rem; padding: 0.25em 0.6em;">SYS</span>
+                    </a>
+                </li>
             <?php endif; ?>
 
             <hr class="sidebar-divider d-none d-md-block">
@@ -2283,16 +2320,16 @@ if (!in_array($open_tab, $valid_tabs)) {
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="topbar-user-name">
                                     <?= htmlspecialchars($_SESSION['admin_name'] ?? 'Admin') ?>
                                 </span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#"><i
+                                <a class="dropdown-item" href="#" onclick="loadSection('profile');return false;"><i
                                         class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profile</a>
-                                <a class="dropdown-item" href="#"><i
+                                <a class="dropdown-item" href="#" onclick="loadSection('settings');return false;"><i
                                         class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Settings</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
@@ -2499,7 +2536,7 @@ if (!in_array($open_tab, $valid_tabs)) {
 
         var currentSection = '';
         var isSuperAdmin = <?= $is_super_admin ? 'true' : 'false' ?>;
-        var validTabs = <?= json_encode($is_super_admin ? ['admin', 'dealer', 'user', 'verification', 'logo', 'service', 'blogs', 'categories', 'dealer_services', 'convenience_fee', 'payment_gateway', 'otp_config', 'smtp_settings', 'domain_config'] : ['dealer', 'user', 'verification', 'service', 'blogs', 'categories', 'dealer_services', 'convenience_fee']) ?>;
+        var validTabs = <?= json_encode($is_super_admin ? ['admin', 'dealer', 'user', 'verification', 'logo', 'service', 'blogs', 'categories', 'dealer_services', 'convenience_fee', 'payment_gateway', 'otp_config', 'smtp_settings', 'domain_config', 'profile', 'settings'] : ['dealer', 'user', 'verification', 'service', 'blogs', 'categories', 'dealer_services', 'convenience_fee', 'profile']) ?>;
 
         // Show dashboard home
         function showDashboard() {
@@ -2519,7 +2556,7 @@ if (!in_array($open_tab, $valid_tabs)) {
         // Load a list via AJAX (Cache-First with instant 0ms switching)
         function loadSection(type) {
             // Guard: block super admin sections for non-super-admins
-            if ((type === 'admin' || type === 'payment_gateway' || type === 'otp_config' || type === 'smtp_settings' || type === 'domain_config') && !isSuperAdmin) return;
+            if ((type === 'admin' || type === 'payment_gateway' || type === 'otp_config' || type === 'smtp_settings' || type === 'domain_config' || type === 'settings') && !isSuperAdmin) return;
 
             if (currentSection === type) return; // already shown
             currentSection = type;
